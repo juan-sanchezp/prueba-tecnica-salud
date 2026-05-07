@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# Redirigir a index.php si no es un archivo o directorio real
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+# Prevenir listado de directorios
+Options -Indexes
+
+# Configuración de errores personalizados (opcional)
+ErrorDocument 404 /proyecto/index.php?controller=error&action=notFound
