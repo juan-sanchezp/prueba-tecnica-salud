@@ -6,27 +6,52 @@
         <form method="POST" action="">
             <div class="row mb-3">
                 <div class="col-md-6">
-                    <label class="form-label">ID Cita</label>
-                    <input type="text" class="form-control" value="<?php echo $factura['id_cita']; ?>" readonly>
+                    <label for="id_cita" class="form-label">ID de la Cita *</label>
+                    <input type="number" 
+                           name="id_cita" 
+                           id="id_cita" 
+                           class="form-control" 
+                           value="<?php echo $factura['id_cita']; ?>" 
+                           required>
+                    <small class="text-muted">Ingrese el ID de la cita médica asociada</small>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Fecha Factura</label>
-                    <input type="text" class="form-control" value="<?php echo $factura['fecha_factura']; ?>" readonly>
+                    <label class="form-label">Fecha de Factura</label>
+                    <input type="text" 
+                           class="form-control" 
+                           value="<?php echo date('d/m/Y H:i:s', strtotime($factura['fecha_factura'])); ?>" 
+                           disabled>
+                    <small class="text-muted">Fecha de creación (no modificable)</small>
                 </div>
             </div>
             
             <div class="row mb-3">
                 <div class="col-md-4">
                     <label class="form-label">Subtotal</label>
-                    <input type="text" name="subtotal" class="form-control" value="<?php echo $factura['subtotal']; ?>" required>
+                    <input type="number" 
+                           step="0.01" 
+                           name="subtotal" 
+                           class="form-control" 
+                           value="<?php echo $factura['subtotal']; ?>" 
+                           required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">IVA</label>
-                    <input type="text" name="iva" class="form-control" value="<?php echo $factura['iva']; ?>" required>
+                    <input type="number" 
+                           step="0.01" 
+                           name="iva" 
+                           class="form-control" 
+                           value="<?php echo $factura['iva']; ?>" 
+                           required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Total</label>
-                    <input type="text" name="total" class="form-control" value="<?php echo $factura['total']; ?>" required>
+                    <input type="number" 
+                           step="0.01" 
+                           name="total" 
+                           class="form-control" 
+                           value="<?php echo $factura['total']; ?>" 
+                           required>
                 </div>
             </div>
             
@@ -39,28 +64,47 @@
                 </select>
             </div>
             
+            <hr>
             <h5>Detalles de la Factura</h5>
             <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr><th>Concepto</th><th>Cantidad</th><th>Valor Unitario</th><th>Valor Total</th></tr>
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Cantidad</th>
+                            <th>Valor Unitario</th>
+                            <th>Valor Total</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        <?php foreach($detalles as $detalle): ?>
-                        <tr>
-                            <td><?php echo $detalle['concepto']; ?></td>
-                            <td><?php echo $detalle['cantidad']; ?></td>
-                            <td>$<?php echo number_format($detalle['valor_unitario'], 2); ?></td>
-                            <td>$<?php echo number_format($detalle['valor_total'], 2); ?></td>
-                        </tr>
-                        <?php endforeach; ?>
+                        <?php if(isset($detalles) && is_array($detalles) && count($detalles) > 0): ?>
+                            <?php foreach($detalles as $detalle): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($detalle['concepto']); ?></td>
+                                <td><?php echo $detalle['cantidad']; ?></td>
+                                <td>$<?php echo number_format($detalle['valor_unitario'], 2); ?></td>
+                                <td>$<?php echo number_format($detalle['valor_total'], 2); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">
+                                    No hay detalles registrados para esta factura
+                                </td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
             
-            <button type="submit" class="btn btn-primary">Actualizar Factura</button>
-            <a href="index.php?controller=factura&action=index" class="btn btn-secondary">Cancelar</a>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Actualizar Factura
+                </button>
+                <a href="index.php?controller=factura&action=index" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
         </form>
     </div>
 </div>
-<?php require_once 'views/layouts/footer.php'; ?>

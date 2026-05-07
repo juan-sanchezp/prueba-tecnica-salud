@@ -45,18 +45,36 @@ class Factura {
     }
     
     public function update($data) {
-        $query = "UPDATE " . $this->table . " 
-                  SET id_cita = :id_cita, subtotal = :subtotal, 
-                      iva = :iva, total = :total, estado = :estado
-                  WHERE id_factura = :id_factura";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id_factura', $data['id_factura']);
-        $stmt->bindParam(':id_cita', $data['id_cita']);
-        $stmt->bindParam(':subtotal', $data['subtotal']);
-        $stmt->bindParam(':iva', $data['iva']);
-        $stmt->bindParam(':total', $data['total']);
-        $stmt->bindParam(':estado', $data['estado']);
-        return $stmt->execute();
+        try {
+            // Validar que id_cita no sea null
+            if(!isset($data['id_cita']) || $data['id_cita'] === null || $data['id_cita'] === '') {
+                throw new Exception("El campo id_cita es obligatorio y no puede estar vacío");
+            }
+            
+            $query = "UPDATE " . $this->table . " 
+                      SET id_cita = :id_cita, 
+                          subtotal = :subtotal, 
+                          iva = :iva, 
+                          total = :total, 
+                          estado = :estado
+                      WHERE id_factura = :id_factura";
+                      
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id_factura', $data['id_factura']);
+            $stmt->bindParam(':id_cita', $data['id_cita']);
+            $stmt->bindParam(':subtotal', $data['subtotal']);
+            $stmt->bindParam(':iva', $data['iva']);
+            $stmt->bindParam(':total', $data['total']);
+            $stmt->bindParam(':estado', $data['estado']);
+            
+            return $stmt->execute();
+        } catch(PDOException $e) {
+            echo "Error en la base de datos: " . $e->getMessage();
+            return false;
+        } catch(Exception $e) {
+            echo "Error: " . $e->getMessage();
+            return false;
+        }
     }
     
     public function delete($id) {
